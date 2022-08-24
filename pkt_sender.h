@@ -1,5 +1,7 @@
 #ifndef _PKT_SENDER_H_
 #define _PKT_SENDER_H_
+#include "proto.h"
+
 #include <stdint.h>
 
 #define PSENDER_NAME "psender"
@@ -7,6 +9,7 @@
 /* Destination specification: hostname, port, protocol */
 #define PSENDER_IPADDR "127.0.0.1"
 #define PSENDER_PORT 31337
+#define PSENDER_USE_TCP 1 /* UDP otherwise */
 
 /* Payload buffer specification */
 #define PSENDER_DATA_MIN_SIZE 600
