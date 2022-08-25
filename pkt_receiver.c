@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,9 +21,13 @@
 #include "md5.h"
 #include "pkt_receiver.h"
 #include "pkt_sender.h"
+#include "ring_buffer.h"
 
 static pthread_t listener_t;
 static pthread_t processor_t;
+
+static struct ring_buffer_t ring_buf;
+static pthread_mutex_t ring_mtx;
 
 static int verbose = 0;
 
@@ -34,13 +39,13 @@ static struct sockaddr_in sa;
 static int sockfd = -1;
 
 static uint16_t ring_size = PRCVR_RING_SIZE;
-static uint16_t latency = PRCVR_LATENCY;
+static uint16_t delay = PRCVR_DELAY;
 
 static void
 usage (int ret)
 {
         fprintf(stderr, "Usage:\n");
-        fprintf(stderr, "\t%s [-h] [-u] [-s IPADDR] [-p PORTNUM] [-S RINGSIZE] [-l LATENCY]\n\n",
+        fprintf(stderr, "\t%s [-h] [-u] [-s IPADDR] [-p PORTNUM] [-S RINGSIZE] [-d DELAY]\n\n",
                 PRCVR_NAME);
 
         fprintf(stderr, "\t%-16s %s\n", "-h", "Display usage information and exit");
@@ -54,8 +59,8 @@ usage (int ret)
 
         fprintf(stderr, "\t%-16s %s (%u by default)\n", "-S RINGSIZE", "Size of ring buffer",
                 PRCVR_RING_SIZE);
-        fprintf(stderr, "\t%-16s %s (%u by default)\n", "-l LATENCY",
-                "Packet processing latency (in msecs)", PRCVR_LATENCY);
+        fprintf(stderr, "\t%-16s %s (%u by default)\n", "-d DELAY",
+                "Packet processing delay (in msecs)", PRCVR_DELAY);
 
         exit(ret);
 }
@@ -65,11 +70,9 @@ static int pkt_handle (int fd)
 {
         static uint8_t buf[PSENDER_DATA_MAX_SIZE];
         struct pkt_header p;
-        struct md5_csum csorig, cs;
+        struct md5_csum cs;
         struct timespec ts;
         int ret;
-        uint32_t seqid, sec;
-        uint16_t msec, size;
 
         bzero(buf, PSENDER_DATA_MAX_SIZE);
 
@@ -80,43 +83,38 @@ static int pkt_handle (int fd)
                 return 1;
         }
 
-        seqid = ntohl(p.seqid);
-        sec = ntohl(p.sec);
-        msec = ntohs(p.msec);
-        size = ntohs(p.size);
+        p.seqid = ntohl(p.seqid);
+        p.sec = ntohl(p.sec);
+        p.msec = ntohs(p.msec);
+        p.size = ntohs(p.size);
 
-        csorig.h0 = ntohl(p.h0);
-        csorig.h1 = ntohl(p.h1);
-        csorig.h2 = ntohl(p.h2);
-        csorig.h3 = ntohl(p.h3);
+        p.h0 = ntohl(p.h0);
+        p.h1 = ntohl(p.h1);
+        p.h2 = ntohl(p.h2);
+        p.h3 = ntohl(p.h3);
 
-        if (size > PSENDER_DATA_MAX_SIZE - 1) {
+        if (p.size > PSENDER_DATA_MAX_SIZE - 1) {
                 fprintf(stderr, "Protocol mismatch? Got size=%u, dropping..\n",
                         p.size);
                 return 1;
         }
 
-        if ((ret = atomicio(read, fd, buf, size)) != size) {
+        if ((ret = atomicio(read, fd, buf, p.size)) != p.size) {
                 fprintf(stderr, "%s: atomicio(read) returned %d (errno: %s)\n",
                         __func__, ret, strerror(errno));
                 return 1;
         }
 
-#ifdef DEBUG
-        fprintf(stdout, "buf: %u %u\n", buf[0], buf[1]);
-#endif
         cs = md5_csum(buf);
 
-        ret = memcmp(&cs, &csorig, sizeof(cs));
+        ret = (cs.h0 == p.h0 && cs.h1 == p.h1 && cs.h2 == p.h2 && cs.h3 == p.h3) ? 0 : 1;
 
-#ifdef DEBUG
-        printf(stdout, "orig_h0 = %lu h0 = %lu\n", csorig.h0, cs.h0);
-#endif
+        clock_gettime(CLOCK_MONOTONIC, &ts); /* XXX: CLOCK_REALTIME? (as pkt_sender) */
 
-        clock_gettime(CLOCK_MONOTONIC, &ts); /* XXX: CLOCK_REALTIME (as pkt_sender) */
-
-        fprintf(stdout, "Received: %u %lu.%lu %s\n", seqid, ts.tv_sec, ts.tv_nsec,
+        fprintf(stdout, "Received: %u %lu.%lu %s\n", p.seqid, ts.tv_sec, ts.tv_nsec,
                 (ret == 0) ? "PASS" : "FAIL");
+
+        ring_buffer_queue(&ring_buf, &p, buf);
 
         return 0;
 }
@@ -140,19 +138,42 @@ static void *pkt_listener_tcp (void *data)
                         exit(EXIT_FAILURE);
                 }
 
-                while (1) {
+                while (!is_terminating) {
                         if (pkt_handle(cfd))
                                 break;
                 }
 
                 close(cfd);
-        } while (1);
+        } while (!is_terminating);
 
         return NULL;
 }
 
+static void msleep(uint16_t msec)
+{
+        struct timespec ts;
+        int res;
+
+        ts.tv_sec = msec / 1000;
+        ts.tv_nsec = (msec % 1000) * 1000000;
+
+        do {
+                res = nanosleep(&ts, &ts);
+        } while (res && errno == EINTR);
+}
+
 void *pkt_processor (void *data)
 {
+        struct pkt_header p;
+        uint8_t buf[PSENDER_DATA_MAX_SIZE];
+        while (ring_buffer_dequeue(&ring_buf, &p, buf) == 0) {
+                msleep(delay);
+                ring_buf.processed++;
+                fprintf(stderr, "hi!\n");
+        }
+
+        pthread_mutex_unlock(&ring_buf.mtx);
+
         return NULL;
 }
 
@@ -162,7 +183,6 @@ main (int argc, char **argv)
 {
         int ret, opt;
         sigset_t signals;
-        int signal;
 
         while ((opt = getopt(argc, argv, "hvus:p:n:i:w:")) != -1) {
                 switch (opt) {
@@ -207,11 +227,11 @@ main (int argc, char **argv)
                                 int tmp = -1;
                                 tmp = atoi(optarg);
                                 if (tmp < 1 || tmp > 65535) {
-                                        fprintf(stderr, "Incorrect latency: %s\n", optarg);
+                                        fprintf(stderr, "Incorrect delay: %s\n", optarg);
                                         exit(EINVAL);
                                 }
 
-                                latency = (uint16_t) tmp;
+                                delay = (uint16_t) tmp;
                                 break;
                         }
                 case '?':
@@ -222,6 +242,12 @@ main (int argc, char **argv)
         }
 
         md5_csum_init(PSENDER_DATA_MAX_SIZE);
+        ring_buffer_init(&ring_buf);
+
+        if (pthread_mutex_init(&ring_mtx, NULL) != 0) {
+                fprintf(stderr, "pthread_mutex_lock() failed: %s\n", strerror(errno));
+                exit(EXIT_FAILURE);
+        }
 
         bzero(&sa, sizeof(sa));
 
@@ -251,6 +277,11 @@ main (int argc, char **argv)
                 exit(EXIT_FAILURE);
         }
 
+        sigemptyset(&signals);
+        sigaddset(&signals, SIGINT);
+        sigaddset(&signals, SIGTERM);
+
+        pthread_sigmask(SIG_BLOCK, &signals, NULL);
 
         if (pthread_create(&listener_t, NULL,
                            is_tcp ? pkt_listener_tcp : pkt_listener_udp,
@@ -264,15 +295,20 @@ main (int argc, char **argv)
                 exit(EXIT_FAILURE);
         }
 
-        sigemptyset(&signals);
-        sigaddset(&signals, SIGINT);
-        sigaddset(&signals, SIGTERM);
+        signal(SIGINT, SIG_DFL);
+        signal(SIGTERM, SIG_DFL);
+        /*
+        if (verbose)
+                alarm(1);
+        */
 
+        int signal;
         while (sigwait(&signals, &signal) == 0) {
                 switch (signal) {
                 case SIGTERM:
                 case SIGINT:
-                        fprintf(stdout, "got SIGTERM, cleaning up");
+                        fprintf(stderr, "got SIGTERM, cleaning up\n");
+                        is_terminating = 1;
                         goto out;
                 default:
                         fprintf(stderr, "got signal(%d), ignoring..\n", signal);
@@ -281,7 +317,8 @@ main (int argc, char **argv)
         }
 
  out:
-        //stop_threads();
+        pthread_join(processor_t, NULL);
+        ring_buffer_print_stats(&ring_buf);
         exit(EXIT_SUCCESS);
 }
 

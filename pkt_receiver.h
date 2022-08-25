@@ -11,6 +11,6 @@
 
 /* Processing options */
 #define PRCVR_RING_SIZE 16  /* Ring buffer size */
-#define PRCVR_LATENCY 15    /* Delay on buffer processing (in milliseconds) */
+#define PRCVR_DELAY 15    /* Delay on buffer processing (in milliseconds) */
 
 #endif

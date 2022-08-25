@@ -15,7 +15,7 @@ add_compile_options(-Wall -Wextra -pedantic -g)
 
 set(COMMON_FILES atomic_io.h md5.c)
 
-set(SENDER_SOURCE_FILES ${COMMON_FILES}  pkt_sender.c)
+set(SENDER_SOURCE_FILES ${COMMON_FILES} pkt_sender.c)
 set(RECEIVER_SOURCE_FILES ${COMMON_FILES} pkt_receiver.c)
 
 add_executable(pkt_sender ${SENDER_SOURCE_FILES})

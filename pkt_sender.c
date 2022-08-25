@@ -115,10 +115,6 @@ send_pkt()
 
 #endif
 
-#ifdef DEBUG
-        fprintf(stdout, "buf: %u %u\n", payload_buf[0], payload_buf[1]);
-#endif
-
         if (atomicio(my_write, sockfd, &p, sizeof(p)) <= 0 ||
             atomicio(my_write, sockfd, payload_buf, bufsize) <= 0) {
                 fprintf(stderr, "write() failed: %s\n", strerror(errno));
