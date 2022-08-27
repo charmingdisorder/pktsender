@@ -68,13 +68,11 @@ usage (int ret)
 /* break connection on non-nil */
 static int pkt_handle (int fd)
 {
-        static uint8_t buf[PSENDER_DATA_MAX_SIZE];
+        uint8_t buf[PSENDER_DATA_MAX_SIZE] = {0};
         struct pkt_header p;
         struct md5_csum cs;
         struct timespec ts;
         int ret;
-
-        bzero(buf, PSENDER_DATA_MAX_SIZE);
 
         if ((ret  = atomicio(read, fd, &p, sizeof(p))) != sizeof(p)) {
                 if (ret != 0)
@@ -169,7 +167,6 @@ void *pkt_processor (void *data)
         while (ring_buffer_dequeue(&ring_buf, &p, buf) == 0) {
                 msleep(delay);
                 ring_buf.processed++;
-                fprintf(stderr, "hi!\n");
         }
 
         pthread_mutex_unlock(&ring_buf.mtx);
