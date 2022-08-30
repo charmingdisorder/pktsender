@@ -33,12 +33,12 @@
 #include <stdint.h>
 
 #include "pkt_sender.h"
+#include "pkt_receiver.h"
 #include "proto.h"
 
-#define RING_BUFFER_SIZE 16
-#define RING_BUFFER_MASK (RING_BUFFER_SIZE-1)
+#define RING_BUFFER_COND_TIMEOUT 2
 
-int is_terminating = 0;
+static int is_terminating = 0;
 
 struct ring_element_t {
         struct pkt_header h;
@@ -46,9 +46,14 @@ struct ring_element_t {
 };
 
 struct ring_buffer_t {
-        struct ring_element_t buffer[RING_BUFFER_SIZE];
-        uint8_t tail_index;
-        uint8_t head_index;
+        struct ring_element_t *buffer;
+
+        uint32_t size;
+        uint32_t mask;
+
+        uint32_t tail_index;
+        uint32_t head_index;
+
         uint32_t received;
         uint32_t dropped;
         uint32_t processed;
@@ -59,18 +64,29 @@ struct ring_buffer_t {
 
 static inline void ring_buffer_print_stats(struct ring_buffer_t *ring)
 {
-        fprintf(stderr, "STATS: received = %lu, dropped = %lu, processed = %lu\n",
+        fprintf(stderr, "STATS %u %u %u\n",
                 ring->received, ring->dropped, ring->processed);
 }
 
-static void ring_buffer_init(struct ring_buffer_t *ring) {
+static void ring_buffer_init(struct ring_buffer_t *ring, uint32_t size) {
         ring->tail_index = 0;
         ring->head_index = 0;
         ring->received = 0;
         ring->processed = 0;
+        ring->dropped = 0;
+        ring->size = size;
+        ring->mask = ring->size - 1;
 
-        for (int i = 0; i < RING_BUFFER_SIZE; i++) {
-                bzero(ring->buffer[i].buf, sizeof(struct ring_element_t));
+        if (ring->size == 0 || ((ring->size & (~(ring->mask))) != ring->size)) {
+                fprintf(stderr, "buffer size must be power of 2\n");
+                exit(EXIT_FAILURE);
+        }
+
+        ring->buffer = calloc(ring->size,sizeof(struct ring_element_t));
+
+        if (ring->buffer == NULL) {
+                fprintf(stderr, "calloc()\n");
+                exit(EXIT_FAILURE);
         }
 
         if (pthread_mutex_init(&ring->mtx, NULL) != 0) {
@@ -89,7 +105,7 @@ static inline uint8_t is_ring_buffer_empty(struct ring_buffer_t *ring) {
 }
 
 static inline uint8_t is_ring_buffer_full(struct ring_buffer_t *ring) {
-        return ((ring->head_index - ring->tail_index) & RING_BUFFER_MASK) == RING_BUFFER_MASK;
+        return ((ring->head_index - ring->tail_index) & ring->mask) == ring->mask;
 }
 
 static int
@@ -102,12 +118,13 @@ ring_buffer_queue(struct ring_buffer_t *ring, struct pkt_header *p, uint8_t *buf
         if(is_ring_buffer_full(ring)) {
                 ring->dropped++;
                 pthread_mutex_unlock(&ring->mtx);
+                return -1;
         }
 
         memcpy(&ring->buffer[ring->head_index].h, &p, sizeof(p));
         memcpy(ring->buffer[ring->head_index].buf, buf, p->size);
 
-        ring->head_index = ((ring->head_index + 1) & RING_BUFFER_MASK);
+        ring->head_index = ((ring->head_index + 1) & ring->mask);
         pthread_cond_broadcast(&ring->empty);
         pthread_mutex_unlock(&ring->mtx);
 
@@ -122,29 +139,28 @@ ring_buffer_dequeue(struct ring_buffer_t *ring, struct pkt_header *p, uint8_t *b
 
         pthread_mutex_lock(&ring->mtx);
 
-        if (is_ring_buffer_empty(ring)) {
-                while (1) {
-                        ts.tv_sec = time(NULL) + 3;
-                        ts.tv_nsec = 0;
-                        ret = pthread_cond_timedwait(&ring->empty, &ring->mtx, &ts);
+        while (is_ring_buffer_empty(ring)) {
+                clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+                ts.tv_sec += RING_BUFFER_COND_TIMEOUT;
+                ts.tv_nsec = 0;
+                ret = pthread_cond_timedwait(&ring->empty, &ring->mtx, &ts);
 
-                        if (ret == ETIMEDOUT && is_terminating) {
-                                return 1;
-                        }
+                if (ret == ETIMEDOUT && is_terminating) {
+                        return 1;
                 }
         }
 
         memcpy(p, &ring->buffer[ring->tail_index].h, sizeof(*p));
         memcpy(buf, &ring->buffer[ring->tail_index].buf, p->size);
 
-        ring->tail_index = (ring->tail_index+1) & RING_BUFFER_MASK;
+        ring->tail_index = (ring->tail_index+1) & ring->mask;
 
         pthread_mutex_unlock(&ring->mtx);
 
         return 0;
 }
 
-static void ring_buffer_init(struct ring_buffer_t *buffer);
+static void ring_buffer_init(struct ring_buffer_t *buffer, uint32_t size);
 static int ring_buffer_queue(struct ring_buffer_t *ring, struct pkt_header *p, uint8_t *buf);
 static int ring_buffer_dequeue(struct ring_buffer_t *ring, struct pkt_header *p, uint8_t *buf);
 

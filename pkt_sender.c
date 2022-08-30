@@ -106,14 +106,7 @@ send_pkt()
 
         p.sec = htonl(ts.tv_sec);
         p.msec = htons((ts.tv_nsec + 1.0e6/2)/1.0e6);
-
         p.size = htons(bufsize);
-
-#if 0
-        uint16_t tmp = (ts.tv_nsec + 1.0e6/2)/1.0e6;
-        fprintf(stdout, "ts.tv_nsec = %lu p.msec = %u bufsize = %u\n",ts.tv_nsec, tmp, bufsize);
-
-#endif
 
         if (atomicio(my_write, sockfd, &p, sizeof(p)) <= 0 ||
             atomicio(my_write, sockfd, payload_buf, bufsize) <= 0) {
@@ -134,14 +127,16 @@ send_pkts()
         unsigned int i;
 
         for (i = 0; i < numpkts; i++) {
-                usleep(interval * 1000);
+                if (i != 0)
+                        usleep(interval * 1000);
                 send_pkt();
         }
 
         sleep(wait_time);
 
         for (i = 0; i < numpkts; i++) {
-                usleep(interval * 1000);
+                if (i != 0)
+                        usleep(interval * 1000);
                 send_pkt();
         }
 }

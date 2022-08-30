@@ -1,3 +1,27 @@
 Example usage:
 
-$ (sleep 1; ./pkt_sender -n 100 -w 1;) &; ./pkt_receiver
+$ (sleep 1; ./pkt_sender -l 1500 -n 5 -w 3 -i 1;sleep 1; pkill pkt_receiver) &; ./pkt_receiver -S 16 -d 1000
+[1] 1381170
+Sent: 0 1857588.618513960
+Received: 0 1857588.618589026 PASS
+Sent: 1 1857588.628657451
+Received: 1 1857588.628748669 PASS
+Sent: 2 1857588.638811226
+Received: 2 1857588.638884675 PASS
+Sent: 3 1857588.648938725
+Received: 3 1857588.649031679 PASS
+Sent: 4 1857588.659072273
+Received: 4 1857588.659145770 PASS
+Sent: 5 1857591.659218052
+Received: 5 1857591.659288905 PASS
+Sent: 6 1857591.669358364
+Received: 6 1857591.669454009 PASS
+Sent: 7 1857591.679510975
+Received: 7 1857591.679601402 PASS
+Sent: 8 1857591.689657722
+Received: 8 1857591.689739571 PASS
+Sent: 9 1857591.699812954
+Received: 9 1857591.700528786 PASS
+got SIGTERM, cleaning up
+STATS 10 0 10
+[1]  + done       ( sleep 1; ./pkt_sender -l 1500 -n 5 -w 3 -i 1; sleep 1; pkill pkt_receiver; )

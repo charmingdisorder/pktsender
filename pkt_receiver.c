@@ -38,18 +38,18 @@ static struct sockaddr_in sa;
 
 static int sockfd = -1;
 
-static uint16_t ring_size = PRCVR_RING_SIZE;
+static uint32_t ring_size = PRCVR_RING_SIZE;
 static uint16_t delay = PRCVR_DELAY;
 
 static void
 usage (int ret)
 {
         fprintf(stderr, "Usage:\n");
-        fprintf(stderr, "\t%s [-h] [-u] [-s IPADDR] [-p PORTNUM] [-S RINGSIZE] [-d DELAY]\n\n",
+        fprintf(stderr, "\t%s [-v] [-h] [-u] [-s IPADDR] [-p PORTNUM] [-S RINGSIZE] [-d DELAY]\n\n",
                 PRCVR_NAME);
 
-        fprintf(stderr, "\t%-16s %s\n", "-h", "Display usage information and exit");
         fprintf(stderr, "\t%-16s %s\n", "-v", "Verbose mode");
+        fprintf(stderr, "\t%-16s %s\n", "-h", "Display usage information and exit");
 
         fprintf(stderr, "\t%-16s %s\n", "-s IPADDR",
                 "IP address to listen on");
@@ -117,12 +117,12 @@ static int pkt_handle (int fd)
         return 0;
 }
 
-static void *pkt_listener_udp (void *data)
+static void *pkt_listener_udp (__attribute__((unused)) void *data)
 {
         return NULL;
 }
 
-static void *pkt_listener_tcp (void *data)
+static void *pkt_listener_tcp (__attribute__((unused)) void *data)
 {
         int cfd;
         struct sockaddr_in sa;
@@ -160,7 +160,7 @@ static void msleep(uint16_t msec)
         } while (res && errno == EINTR);
 }
 
-void *pkt_processor (void *data)
+void *pkt_processor (__attribute__((unused)) void *data)
 {
         struct pkt_header p;
         uint8_t buf[PSENDER_DATA_MAX_SIZE];
@@ -178,10 +178,10 @@ void *pkt_processor (void *data)
 int
 main (int argc, char **argv)
 {
-        int ret, opt;
+        int opt;
         sigset_t signals;
 
-        while ((opt = getopt(argc, argv, "hvus:p:n:i:w:")) != -1) {
+        while ((opt = getopt(argc, argv, "hvus:S:p:d:")) != -1) {
                 switch (opt) {
                 case 'v':
                         verbose = 1;
@@ -211,12 +211,12 @@ main (int argc, char **argv)
                         {
                                 int tmp = -1;
                                 tmp = atoi(optarg);
-                                if (tmp < 1 || tmp > 65535) {
+                                if (tmp < 1) {
                                         fprintf(stderr, "Incorrect ring buffer size: %s\n", optarg);
                                         exit(EINVAL);
                                 }
 
-                                port = (uint16_t) tmp;
+                                ring_size = (uint32_t) tmp;
                                 break;
                         }
                 case 'l':
@@ -232,14 +232,14 @@ main (int argc, char **argv)
                                 break;
                         }
                 case '?':
-                        fprintf(stderr, "Unknown option: %s\n", optopt);
+                        fprintf(stderr, "Unknown option: %c\n", optopt);
                         exit(EINVAL);
                         break;
                 }
         }
 
         md5_csum_init(PSENDER_DATA_MAX_SIZE);
-        ring_buffer_init(&ring_buf);
+        ring_buffer_init(&ring_buf, ring_size);
 
         if (pthread_mutex_init(&ring_mtx, NULL) != 0) {
                 fprintf(stderr, "pthread_mutex_lock() failed: %s\n", strerror(errno));
