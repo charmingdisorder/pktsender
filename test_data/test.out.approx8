@@ -1,0 +1,12 @@
+2022-08-30 19:09:33 pkt_size = 600 num_pkts = 500 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+202 798 0.202
+2022-08-30 19:09:57 pkt_size = 600 num_pkts = 1000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+532 1468 0.266
+2022-08-30 19:11:41 pkt_size = 600 num_pkts = 5000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+3153 6847 0.3153
+2022-08-30 19:15:06 pkt_size = 600 num_pkts = 10000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+6431 13569 0.32155
+2022-08-30 19:20:13 pkt_size = 600 num_pkts = 15000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+9708 20292 0.3236
+2022-08-30 19:27:02 pkt_size = 600 num_pkts = 20000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+13000 27000 0.325

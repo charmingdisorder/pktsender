@@ -1,0 +1,8 @@
+2022-08-30 20:10:19 pkt_size = 600 num_pkts = 5000 snd_delay = 1 rcv_delay = 1 rng_size = 4096 
+0 10000 0
+2022-08-30 20:14:45 pkt_size = 600 num_pkts = 10000 snd_delay = 1 rcv_delay = 1 rng_size = 4096 
+2410 17590 0.1205
+2022-08-30 20:20:53 pkt_size = 600 num_pkts = 15000 snd_delay = 1 rcv_delay = 1 rng_size = 4096 
+5694 24306 0.1898
+2022-08-30 20:28:42 pkt_size = 600 num_pkts = 20000 snd_delay = 1 rcv_delay = 1 rng_size = 4096 
+8978 31022 0.22445

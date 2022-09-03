@@ -1,0 +1,36 @@
+2022-08-30 17:35:23 pkt_size = 1000 num_pkts = 500 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+202 798 0.202
+2022-08-30 17:35:36 pkt_size = 1000 num_pkts = 500 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+202 798 0.202
+2022-08-30 17:35:49 pkt_size = 1000 num_pkts = 500 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+202 798 0.202
+2022-08-30 17:36:13 pkt_size = 1000 num_pkts = 1000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+530 1470 0.265
+2022-08-30 17:36:36 pkt_size = 1000 num_pkts = 1000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+530 1470 0.265
+2022-08-30 17:36:59 pkt_size = 1000 num_pkts = 1000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+530 1470 0.265
+2022-08-30 17:38:43 pkt_size = 1000 num_pkts = 5000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+3158 6842 0.3158
+2022-08-30 17:40:28 pkt_size = 1000 num_pkts = 5000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+3157 6843 0.3157
+2022-08-30 17:42:12 pkt_size = 1000 num_pkts = 5000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+3157 6843 0.3157
+2022-08-30 17:45:38 pkt_size = 1000 num_pkts = 10000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+6440 13560 0.322
+2022-08-30 17:49:03 pkt_size = 1000 num_pkts = 10000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+6440 13560 0.322
+2022-08-30 17:52:29 pkt_size = 1000 num_pkts = 10000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+6440 13560 0.322
+2022-08-30 17:57:35 pkt_size = 1000 num_pkts = 15000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+9722 20278 0.324067
+2022-08-30 18:02:42 pkt_size = 1000 num_pkts = 15000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+9722 20278 0.324067
+2022-08-30 18:07:49 pkt_size = 1000 num_pkts = 15000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+9723 20277 0.3241
+2022-08-30 18:14:37 pkt_size = 1000 num_pkts = 20000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+13005 26995 0.325125
+2022-08-30 18:21:25 pkt_size = 1000 num_pkts = 20000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+13005 26995 0.325125
+2022-08-30 18:28:13 pkt_size = 1000 num_pkts = 20000 snd_delay = 10 rcv_delay = 100 rng_size = 64 
+13005 26995 0.325125

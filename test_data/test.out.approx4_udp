@@ -1,0 +1,63 @@
+2022-09-02 21:33:39 pkt_size = 1000 num_pkts = 16 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:40 pkt_size = 1000 num_pkts = 16 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:41 pkt_size = 1000 num_pkts = 16 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:41 pkt_size = 1000 num_pkts = 32 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:41 pkt_size = 1000 num_pkts = 32 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:41 pkt_size = 1000 num_pkts = 32 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:41 pkt_size = 1000 num_pkts = 64 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:41 pkt_size = 1000 num_pkts = 64 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:41 pkt_size = 1000 num_pkts = 64 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 256 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 256 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 256 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 1024 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 1024 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 1024 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 2048 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 2048 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:33:42 pkt_size = 1000 num_pkts = 2048 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+2022-09-02 21:39:40 pkt_size = 1000 num_pkts = 16 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 32 0
+2022-09-02 21:39:43 pkt_size = 1000 num_pkts = 16 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 32 0
+2022-09-02 21:39:47 pkt_size = 1000 num_pkts = 16 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 32 0
+2022-09-02 21:39:50 pkt_size = 1000 num_pkts = 32 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 64 0
+2022-09-02 21:39:54 pkt_size = 1000 num_pkts = 32 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 64 0
+2022-09-02 21:39:58 pkt_size = 1000 num_pkts = 32 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 64 0
+2022-09-02 21:40:02 pkt_size = 1000 num_pkts = 64 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 128 0
+2022-09-02 21:40:06 pkt_size = 1000 num_pkts = 64 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 128 0
+2022-09-02 21:40:11 pkt_size = 1000 num_pkts = 64 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+0 128 0
+2022-09-02 21:40:19 pkt_size = 1000 num_pkts = 256 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+106 406 0.207031
+2022-09-02 21:40:27 pkt_size = 1000 num_pkts = 256 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+106 406 0.207031
+2022-09-02 21:40:35 pkt_size = 1000 num_pkts = 256 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+106 406 0.207031
+2022-09-02 21:40:48 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+274 750 0.267578
+2022-09-02 21:41:02 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+274 750 0.267578
+2022-09-02 21:41:15 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+274 750 0.267578
+2022-09-02 21:41:39 pkt_size = 1000 num_pkts = 1024 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+610 1438 0.297852
+2022-09-02 21:42:03 pkt_size = 1000 num_pkts = 1024 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+610 1438 0.297852
+2022-09-02 21:42:26 pkt_size = 1000 num_pkts = 1024 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+610 1438 0.297852
+2022-09-02 21:43:11 pkt_size = 1000 num_pkts = 2048 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+1283 2813 0.313232
+2022-09-02 21:43:55 pkt_size = 1000 num_pkts = 2048 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+1283 2813 0.313232
+2022-09-02 21:44:40 pkt_size = 1000 num_pkts = 2048 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+1283 2813 0.313232

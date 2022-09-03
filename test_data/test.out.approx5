@@ -1,0 +1,36 @@
+2022-08-30 16:17:53 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 50 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:18:07 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 50 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:18:20 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 50 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:18:34 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:18:47 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+273 751 0.266602
+2022-08-30 16:19:00 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 150 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:19:14 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 500 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:19:27 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 500 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:19:40 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 500 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:19:54 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 1000 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:20:07 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 1000 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:20:21 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 1000 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:20:34 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 1500 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:20:47 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 1500 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:21:01 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 1500 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:21:14 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 3000 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:21:27 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 3000 rng_size = 32 
+274 750 0.267578
+2022-08-30 16:21:41 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 3000 rng_size = 32 
+274 750 0.267578
