@@ -119,6 +119,11 @@ static int pkt_handle (int fd)
 
 static void *pkt_listener_udp (__attribute__((unused)) void *data)
 {
+        while (!is_terminating) {
+                if (pkt_handle(sockfd))
+                        break;
+        }
+
         return NULL;
 }
 
@@ -294,10 +299,6 @@ main (int argc, char **argv)
 
         signal(SIGINT, SIG_DFL);
         signal(SIGTERM, SIG_DFL);
-        /*
-        if (verbose)
-                alarm(1);
-        */
 
         int signal;
         while (sigwait(&signals, &signal) == 0) {
