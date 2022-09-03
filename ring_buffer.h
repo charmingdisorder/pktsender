@@ -38,7 +38,7 @@
 
 #define RING_BUFFER_COND_TIMEOUT 2
 
-static int is_terminating = 0;
+static volatile int is_terminating = 0;
 
 struct ring_element_t {
         struct pkt_header h;
