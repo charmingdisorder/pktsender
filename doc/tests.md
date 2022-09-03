@@ -172,7 +172,6 @@ process_delay=150, num_tests=3`
 | 15000    | 5681 (19%)   | 367        |
 | 20000    | 9012 (22.5%) | 469        |
 
-
 ``` {=html}
 <style>
 body { min-width: 80% !important; }

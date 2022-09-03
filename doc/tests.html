@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Тестирование pkt_{sender,receiver}</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Тестирование pkt_{sender,receiver}</h1>
+</header>
+<h2 id="параметры-тестирования">Параметры тестирования</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Параметр</th>
+<th>Описание</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>proto</td>
+<td>Протокол (TCP/UDP)</td>
+</tr>
+<tr class="even">
+<td>num_pkts</td>
+<td>Количество пакетов в batch</td>
+</tr>
+<tr class="odd">
+<td>pkt_size</td>
+<td>Размер пакета</td>
+</tr>
+<tr class="even">
+<td>process_delay</td>
+<td>Задержка при обработке</td>
+</tr>
+<tr class="odd">
+<td>send_delay</td>
+<td>Задержка между отправкой пакетов</td>
+</tr>
+<tr class="even">
+<td>ring_size</td>
+<td>Размер кольцевого буфера (степень двойки)</td>
+</tr>
+<tr class="odd">
+<td>num_tests</td>
+<td>Количество запусков для теста</td>
+</tr>
+</tbody>
+</table>
+<h2 id="тесты">Тесты</h2>
+<p>Полные конфигурации тестов доступны в <a href="../test.sh">самом
+скрипте</a></p>
+<h3 id="протокол-tcp">Протокол TCP</h3>
+<ol type="1">
+<li><code>pkt_size=1000, num_pkts=30, process_delay="10 100 1000", send_delay="10 100 1000", ring_size="8 16 128"</code></li>
+</ol>
+<p>Базовый тест, показывающий, что количество потерь (10% -&gt; 0)
+зависит от размера кольцевого буфера (8-&gt;16)</p>
+<p><a href="../test_data/test.out.approx1">Протокол запуска</a></p>
+<ol start="2" type="1">
+<li><code>pkt_size=1000, num_pkts=40 process_delay=150, num_tests=5, ring_size="8 32 128"</code></li>
+</ol>
+<p>Проверка вышеуказанной зависимости, увеличиваем размер кольцевого
+буфера (8 -&gt; 32) и отсутствуют потери (15% -&gt; 0%)</p>
+<p><a href="../test_data/test.out.approx2">Протокол запуска</a></p>
+<ol start="3" type="1">
+<li><code>num_pkts="32 64 256", ring_size="16 32 128"</code></li>
+</ol>
+<p>Очередной простой тест на зависимость</p>
+<p><a href="../test_data/test.out.approx3">Протокол запуска</a></p>
+<ol start="4" type="1">
+<li><code>num_pkts="16 32 64 256 512 1024 2048", ring_size=32, pkt_size=1000, send_delay=5, process_delay=150, num_tests=3</code></li>
+</ol>
+<p>Тестируем зависимость потери от количества посылаемых пакетов:</p>
+<p><a href="../test_data/test.out.approx4">Протокол запуска</a></p>
+<figure>
+<img src="../test_data/approx4.png"
+alt="Количество отсылаемых пакетов в batch и процент потери" />
+<figcaption aria-hidden="true">Количество отсылаемых пакетов в batch и
+процент потери</figcaption>
+</figure>
+<p>Это логарифмическая зависимость, которая стремится к 0.(3)</p>
+<p>Время запуска: 5:03</p>
+<ol start="5" type="1">
+<li><code>process_delay = "50 100 300 500 1500"</code> (остальные
+характеристики повторяют тест 4)</li>
+</ol>
+<p><a href="../test_data/test.out.approx5">Протокол запуска</a></p>
+<p>Фиксированная потеря пакетов (274): отсутствует завимиость от
+<code>process_delay</code></p>
+<p>Время запуска: 3:48</p>
+<pre><code># 2022-08-30 16:17:53 pkt_size = 1000 num_pkts = 512 snd_delay = 5 rcv_delay = 50 rng_size = 32 
+# 274 750 0.267578</code></pre>
+<ol start="6" type="1">
+<li><code>send_delay = "50 100 300 500 1500"</code> (повторяет тест 5
+для <code>send_delay</code>)</li>
+</ol>
+<p><a href="../test_data/test.out.approx6">Протокол запуска</a></p>
+<p>Фиксированная потеря пакетов (106): отсутствует завимиость от
+<code>process_delay</code></p>
+<ol start="7" type="1">
+<li><code>num_pkts="500 1000 5000 10000 15000 20000", ring_size=32, pkt_size=1000, send_delay=5, process_delay=150, num_tests=3</code></li>
+</ol>
+<p>Повтор теста 4 с другой гланулярностью для <code>num_pkts</code>.</p>
+<p>Время запуска: 53:47</p>
+<p><a href="../test_data/test.out.approx7">Протокол запуска</a></p>
+<figure>
+<img src="../test_data/approx7.png"
+alt="Количество отсылаемых пакетов в batch/процент потерь" />
+<figcaption aria-hidden="true">Количество отсылаемых пакетов в
+batch/процент потерь</figcaption>
+</figure>
+<p>Имеем такое же логарифмическое поведение.</p>
+<ol start="8" type="1">
+<li><code>pkt_size = 600</code> (повторяет тест 7 с уменьшенным размером
+пакета)</li>
+</ol>
+<p>Время запуска: 17:41</p>
+<p><a href="../test_data/test.out.approx8">Протокол запуска</a></p>
+<p>Отсутствует зависимость от размера пакета.</p>
+<ol start="9" type="1">
+<li>Фиксируем <code>pkt_size</code> (предыдущий тест),
+<code>ring_size="64 512 4096", num_pkts="500 1000 5000"</code></li>
+</ol>
+<p>Время запуска: 8:17</p>
+<p><a href="../test_data/test.out.approx9">Протокол запуска</a></p>
+<p>Результаты:</p>
+<table>
+<thead>
+<tr class="header">
+<th>num_pkts<br>ring_size</th>
+<th>500</th>
+<th>1000</th>
+<th>5000</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>64</td>
+<td>202</td>
+<td>531</td>
+<td>3158</td>
+</tr>
+<tr class="even">
+<td>512</td>
+<td>0</td>
+<td>0</td>
+<td>2707</td>
+</tr>
+<tr class="odd">
+<td>4096</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<ol start="10" type="1">
+<li>Фиксируем <code>rng_size=4096, pkt_size=600</code>, изменяем
+<code>num_pkts="5000 10000 15000 20000"</code></li>
+</ol>
+<p>Время запуска: 20:55</p>
+<p><a href="../test_data/test.out.approx10">Протокол запуска</a></p>
+<p>Результаты:</p>
+<table>
+<thead>
+<tr class="header">
+<th>num_pkts</th>
+<th>packet loss</th>
+<th>time (sec)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5000</td>
+<td>0</td>
+<td>152</td>
+</tr>
+<tr class="even">
+<td>10000</td>
+<td>2410 (12%)</td>
+<td>266</td>
+</tr>
+<tr class="odd">
+<td>15000</td>
+<td>5694 (19%)</td>
+<td>368</td>
+</tr>
+<tr class="even">
+<td>20000</td>
+<td>8978 (22.5%)</td>
+<td>491</td>
+</tr>
+</tbody>
+</table>
+<h3 id="протокол-udp">Протокол UDP</h3>
+<p>Произведём запуск некоторых тестов для протокола UDP. Существенных
+отличий в данном окружении быть не должно - проверим.</p>
+<ol type="1">
+<li>Для теста 4 имеем сходные результаты.</li>
+</ol>
+<p><a href="../test_data/test.out.approx4_udp">Протокол запуска</a></p>
+<p>Время запуска: 5:00 (5:03 для TCP)</p>
+<figure>
+<img src="../test_data/approx4_udp.png"
+alt="Количество отсылаемых пакетов в batch и процент потери" />
+<figcaption aria-hidden="true">Количество отсылаемых пакетов в batch и
+процент потери</figcaption>
+</figure>
+<p>Результаты совпадают:</p>
+<table>
+<thead>
+<tr class="header">
+<th>num_pkts</th>
+<th>loss (TCP)</th>
+<th>loss (UDP)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>64</td>
+<td>0.207031</td>
+<td>0.207031</td>
+</tr>
+<tr class="even">
+<td>256</td>
+<td>0.267852</td>
+<td>0.267578</td>
+</tr>
+<tr class="odd">
+<td>512</td>
+<td>0.297852</td>
+<td>0.297852</td>
+</tr>
+<tr class="even">
+<td>1024</td>
+<td>0.312988</td>
+<td>0.313232</td>
+</tr>
+</tbody>
+</table>
+<ol start="2" type="1">
+<li>Для теста 7 имеем сходные результаты (32.5% против 32.2% потерь для
+20000 пакетов и UDP/TCP)</li>
+</ol>
+<p><a href="../test_data/test.out.approx7_udp">Протокол запуска</a></p>
+<figure>
+<img src="../test_data/approx7_udp.png"
+alt="Количество отсылаемых пакетов в batch и процент потери" />
+<figcaption aria-hidden="true">Количество отсылаемых пакетов в batch и
+процент потери</figcaption>
+</figure>
+<table>
+<thead>
+<tr class="header">
+<th>num_pkts</th>
+<th>loss (TCP)</th>
+<th>loss (UDP)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>500</td>
+<td>0.202</td>
+<td>0.202</td>
+</tr>
+<tr class="even">
+<td>1000</td>
+<td>0.265</td>
+<td>0.2655</td>
+</tr>
+<tr class="odd">
+<td>5000</td>
+<td>0.3158</td>
+<td>0.3158</td>
+</tr>
+<tr class="even">
+<td>10000</td>
+<td>0.322</td>
+<td>0.32</td>
+</tr>
+<tr class="odd">
+<td>15000</td>
+<td>0.3241</td>
+<td>0.32</td>
+</tr>
+<tr class="even">
+<td>20000</td>
+<td>0.325125</td>
+<td>0.32265</td>
+</tr>
+</tbody>
+</table>
+<ol start="3" type="1">
+<li>Для теста 10</li>
+</ol>
+<p><a href="../test_data/test.out.approx10_udp">Протокол запуска</a></p>
+<p>Время запуска: 20:54 (20:55 для TCP)</p>
+<p>Результаты практически совпадают:</p>
+<table>
+<thead>
+<tr class="header">
+<th>num_pkts</th>
+<th>packet loss</th>
+<th>time (sec)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5000</td>
+<td>0</td>
+<td>152</td>
+</tr>
+<tr class="even">
+<td>10000</td>
+<td>2425 (12%)</td>
+<td>266</td>
+</tr>
+<tr class="odd">
+<td>15000</td>
+<td>5681 (19%)</td>
+<td>367</td>
+</tr>
+<tr class="even">
+<td>20000</td>
+<td>9012 (22.5%)</td>
+<td>469</td>
+</tr>
+</tbody>
+</table>
+<style>
+body { min-width: 80% !important; }
+</style>
+</body>
+</html>
