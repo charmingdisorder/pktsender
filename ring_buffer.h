@@ -64,11 +64,11 @@ struct ring_buffer_t {
 
 static inline void ring_buffer_print_stats(struct ring_buffer_t *ring)
 {
-        fprintf(stderr, "STATS %u %u %u\n",
-                ring->received, ring->dropped, ring->processed);
+        fprintf(stdout, "STATS %u %u %u\n", ring->received, ring->dropped, ring->processed);
 }
 
-static void ring_buffer_init(struct ring_buffer_t *ring, uint32_t size) {
+static void ring_buffer_init(struct ring_buffer_t *ring, uint32_t size)
+{
         ring->tail_index = 0;
         ring->head_index = 0;
         ring->received = 0;
@@ -121,7 +121,7 @@ ring_buffer_queue(struct ring_buffer_t *ring, struct pkt_header *p, uint8_t *buf
                 return -1;
         }
 
-        memcpy(&ring->buffer[ring->head_index].h, &p, sizeof(p));
+        memcpy(&ring->buffer[ring->head_index].h, p, sizeof(struct pkt_header));
         memcpy(ring->buffer[ring->head_index].buf, buf, p->size);
 
         ring->head_index = ((ring->head_index + 1) & ring->mask);
@@ -150,7 +150,7 @@ ring_buffer_dequeue(struct ring_buffer_t *ring, struct pkt_header *p, uint8_t *b
                 }
         }
 
-        memcpy(p, &ring->buffer[ring->tail_index].h, sizeof(*p));
+        memcpy(p, &ring->buffer[ring->tail_index].h, sizeof(struct pkt_header));
         memcpy(buf, &ring->buffer[ring->tail_index].buf, p->size);
 
         ring->tail_index = (ring->tail_index+1) & ring->mask;
