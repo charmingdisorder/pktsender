@@ -168,9 +168,24 @@ static void msleep(uint16_t msec)
 void *pkt_processor (__attribute__((unused)) void *data)
 {
         struct pkt_header p;
+        struct timespec ts;
+        struct md5_csum cs;
+        int ret;
+
         uint8_t buf[PSENDER_DATA_MAX_SIZE];
+
         while (ring_buffer_dequeue(&ring_buf, &p, buf) == 0) {
                 msleep(delay);
+
+                cs = md5_csum(buf);
+
+                ret = (cs.h0 == p.h0 && cs.h1 == p.h1 && cs.h2 == p.h2 && cs.h3 == p.h3) ? 0 : 1;
+
+                clock_gettime(CLOCK_MONOTONIC, &ts);
+
+                fprintf(stdout, "Processed: %u %lu.%lu %s\n", p.seqid, ts.tv_sec, ts.tv_nsec,
+                        (ret == 0) ? "PASS" : "FAIL");
+
                 ring_buf.processed++;
         }
 
