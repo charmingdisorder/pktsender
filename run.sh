@@ -49,7 +49,8 @@ params="pkt_size = $pkt_size num_pkts = $num_pkts send_delay = $send_delay proce
 
 (sleep 1; $SENDER $use_udp -l $pkt_size -n $num_pkts -w $batch_wait -i $send_delay > /dev/null; sleep 1; pkill pkt_receiver) &
 
-$RECEIVER $use_udp -S $ring_size -d $process_delay 2>&1 | grep STATS |  awk '{print "processed = " $4 " dropped = " $3 " loss = " $3/($3+$4)}'
+$RECEIVER $use_udp -S $ring_size -d $process_delay
+        #| grep STATS |  awk '{print "processed = " $4 " dropped = " $3 " loss = " $3/($3+$4)}'
 
 TS=`date "+%Y-%m-%d %H:%M:%S"`
 
